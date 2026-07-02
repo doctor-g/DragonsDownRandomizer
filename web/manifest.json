@@ -1,11 +1,11 @@
 {
-    "name": "dragons_down_randomizer",
-    "short_name": "dragons_down_randomizer",
+    "name": "Dragons Down Randomizer",
+    "short_name": "DDRandomizer",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Randomizer for Dragons Down board game",
+    "description": "Randomizer for the Dragons Down board game",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
