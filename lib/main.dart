@@ -26,8 +26,24 @@ class MainWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(title)),
+      appBar: AppBar(
+        title: const Text(title),
+        actions: [
+          IconButton(
+            onPressed: () => _showLegalPopup(context),
+            icon: const Icon(Icons.info),
+          ),
+        ],
+      ),
       body: RandomizerWidget(),
+    );
+  }
+
+  void _showLegalPopup(BuildContext context) {
+    showAboutDialog(
+      context: context,
+      applicationName: title,
+      applicationLegalese: '©2026 Paul Gestwicki',
     );
   }
 }
