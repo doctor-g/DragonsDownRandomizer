@@ -60,14 +60,33 @@ class RandomizerWidget extends StatefulWidget {
 }
 
 class _RandomizerWidgetState extends State<RandomizerWidget> {
+  int _terrainCount = 3;
   List<String> _terrains = [];
-  int _players = 3;
+  int _playerCount = 3;
   List<PlayerData> _playerData = [];
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 16.0,
       children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Terrain Packs'),
+            SegmentedButton<int>(
+              multiSelectionEnabled: false,
+              segments: [
+                for (int i = 1; i <= 5; i++)
+                  ButtonSegment(value: i, label: Text("$i")),
+              ],
+              selected: {_terrainCount},
+              onSelectionChanged: (selection) => setState(() {
+                _terrainCount = selection.first;
+              }),
+            ),
+          ],
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -79,9 +98,9 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
                 for (int i = 1; i <= _maxPlayers; i++)
                   ButtonSegment(value: i, label: Text("$i")),
               ],
-              selected: {_players},
+              selected: {_playerCount},
               onSelectionChanged: (selection) => setState(() {
-                _players = selection.first;
+                _playerCount = selection.first;
               }),
             ),
           ],
@@ -90,41 +109,36 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
           onPressed: _onRandomizePressed,
           child: const Text('Randomize'),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
+        if (_terrains.isNotEmpty)
+          Column(
             children: [
               const Text('TERRAINS'),
               ..._terrains.map((terrain) => Text(terrain)),
             ],
           ),
-        ),
         if (_playerData.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 12.0,
-              children: [
-                for (int i = 0; i < _playerData.length; i++)
-                  Column(
-                    children: [
-                      Text("PLAYER ${i + 1}"),
-                      PlayerWidget(data: _playerData[i]),
-                    ],
-                  ),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 12.0,
+            children: [
+              for (int i = 0; i < _playerData.length; i++)
+                Column(
+                  children: [
+                    Text("PLAYER ${i + 1}"),
+                    PlayerWidget(data: _playerData[i]),
+                  ],
+                ),
+            ],
           ),
       ],
     );
   }
 
   void _onRandomizePressed() {
-    final shuffled = List.of(terrainPacks)..shuffle();
+    final shuffledTerrains = List.of(terrainPacks)..shuffle();
     setState(() {
-      _terrains = shuffled.sublist(0, 3);
-      _playerData = _generateRandomPlayerData(_players);
+      _terrains = shuffledTerrains.sublist(0, _terrainCount)..sort();
+      _playerData = _generateRandomPlayerData(_playerCount);
     });
   }
 
