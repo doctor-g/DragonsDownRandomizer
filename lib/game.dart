@@ -54,6 +54,8 @@ const classes = [
   'Sorcerer',
   'Soulless',
   'Trickster',
+  'Warlock',
+  'Warrior',
   'Witch',
 ];
 
