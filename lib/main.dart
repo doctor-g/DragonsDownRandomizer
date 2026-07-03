@@ -166,7 +166,7 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
     required int selected,
     required void Function(int selection) onSelected,
   }) => Row(
-    mainAxisSize: MainAxisSize.min,
+    mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Text('$label: '),
       DropdownMenu<int>(
