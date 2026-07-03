@@ -96,41 +96,23 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
   Widget build(BuildContext context) {
     return Column(
       spacing: 16.0,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Terrain Packs'),
-            SegmentedButton<int>(
-              multiSelectionEnabled: false,
-              segments: [
-                for (int i = 1; i <= 5; i++)
-                  ButtonSegment(value: i, label: Text("$i")),
-              ],
-              selected: {_terrainCount},
-              onSelectionChanged: (selection) => setState(() {
-                _terrainCount = selection.first;
-              }),
-            ),
-          ],
+        _makeNumberSelector(
+          label: 'Terrain Packs',
+          max: 5,
+          selected: _terrainCount,
+          onSelected: (selection) => setState(() {
+            _terrainCount = selection;
+          }),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Players: '),
-
-            SegmentedButton<int>(
-              multiSelectionEnabled: false,
-              segments: [
-                for (int i = 1; i <= _maxPlayers; i++)
-                  ButtonSegment(value: i, label: Text("$i")),
-              ],
-              selected: {_playerCount},
-              onSelectionChanged: (selection) => setState(() {
-                _playerCount = selection.first;
-              }),
-            ),
-          ],
+        _makeNumberSelector(
+          label: 'Players',
+          max: _maxPlayers,
+          selected: _playerCount,
+          onSelected: (selection) => setState(() {
+            _playerCount = selection;
+          }),
         ),
         ElevatedButton(
           onPressed: _onRandomizePressed,
@@ -144,8 +126,7 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
             ],
           ),
         if (_playerData.isNotEmpty)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
             spacing: 12.0,
             children: [
               for (int i = 0; i < _playerData.length; i++)
@@ -177,6 +158,34 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
         PlayerData(lineage: shuffledLineages[i], clazz: shuffledClasses[i]),
     ];
   }
+
+  Widget _makeNumberSelector({
+    required String label,
+    int min = 1,
+    required int max,
+    required int selected,
+    required void Function(int selection) onSelected,
+  }) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text('$label: '),
+      DropdownMenu<int>(
+        enableSearch: false,
+        enableFilter: false,
+        requestFocusOnTap: false,
+        dropdownMenuEntries: [
+          for (int i = min; i <= max; i++)
+            DropdownMenuEntry(value: i, label: '$i'),
+        ],
+        initialSelection: selected,
+        onSelected: (selection) => setState(() {
+          if (selection != null) {
+            onSelected.call(selection);
+          }
+        }),
+      ),
+    ],
+  );
 }
 
 class PlayerWidget extends StatelessWidget {
