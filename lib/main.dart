@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'game.dart';
 
+const _maxPlayers = 6;
+
 void main() {
   runApp(const DragonsDownRandomizerApp());
 }
@@ -66,50 +68,54 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Column(children: [..._terrains.map((terrain) => Text(terrain))]),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('Players: '),
-            DropdownButton(
-              items: [
-                ...[1, 2, 3, 4].map(
-                  (number) => DropdownMenuItem<int>(
-                    value: number,
-                    child: Text(number.toString()),
-                  ),
-                ),
+
+            SegmentedButton<int>(
+              multiSelectionEnabled: false,
+              segments: [
+                for (int i = 1; i <= _maxPlayers; i++)
+                  ButtonSegment(value: i, label: Text("$i")),
               ],
-              value: _players,
-              onChanged: (value) => {
-                if (value != null)
-                  {
-                    setState(() {
-                      _players = value;
-                    }),
-                  },
-              },
+              selected: {_players},
+              onSelectionChanged: (selection) => setState(() {
+                _players = selection.first;
+              }),
             ),
           ],
         ),
-        if (_playerData.isNotEmpty)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 12.0,
-            children: [
-              for (int i = 0; i < _players; i++)
-                Column(
-                  children: [
-                    Text("Player ${i + 1}"),
-                    PlayerWidget(data: _playerData[i]),
-                  ],
-                ),
-            ],
-          ),
         ElevatedButton(
           onPressed: _onRandomizePressed,
           child: const Text('Randomize'),
         ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              const Text('TERRAINS'),
+              ..._terrains.map((terrain) => Text(terrain)),
+            ],
+          ),
+        ),
+        if (_playerData.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 12.0,
+              children: [
+                for (int i = 0; i < _playerData.length; i++)
+                  Column(
+                    children: [
+                      Text("PLAYER ${i + 1}"),
+                      PlayerWidget(data: _playerData[i]),
+                    ],
+                  ),
+              ],
+            ),
+          ),
       ],
     );
   }
