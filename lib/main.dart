@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'game.dart';
 
@@ -48,6 +50,31 @@ class MainWidget extends StatelessWidget {
       context: context,
       applicationName: title,
       applicationLegalese: '©2026 Paul Gestwicki',
+      children: [
+        Padding(
+          // The children use a different indentation level than the legalese.
+          // Without the padding, there will be a ragged left, which looks bad.
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: RichText(
+            text: TextSpan(
+              style: Theme.of(context).textTheme.bodySmall,
+              text: 'Based on ',
+              children: [
+                TextSpan(
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                  text: 'Scott DeMers\' Dragons Down',
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () =>
+                        launchUrl(Uri.parse('https://activemagicgames.com')),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
