@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'game.dart';
+
 void main() {
   runApp(const DragonsDownRandomizerApp());
 }
@@ -140,45 +142,3 @@ class PlayerWidget extends StatelessWidget {
     return Text('${_data.lineage} ${_data.clazz}');
   }
 }
-
-class PlayerData {
-  final String lineage;
-  final String clazz;
-
-  PlayerData({required this.lineage, required this.clazz});
-}
-
-const lineages = ['Dwarf', 'Human', 'Halfling', 'Elf', 'Half-Elf', 'Half-Orc'];
-
-const classes = [
-  'Archer',
-  'Assassin',
-  'Barbarian',
-  'Bard',
-  'Battle Mage',
-  'Black Knight',
-  'Cleric',
-  'Conjuror',
-  'Druid',
-  'Enchanter',
-  'Executioner',
-  'Illusionist',
-  'Knight',
-  'Magician',
-  'Paladin',
-  'Ranger',
-  'Rogue',
-  'Runesword',
-  'Sorcerer',
-  'Soulless',
-  'Trickster',
-  'Witch',
-];
-
-const terrainPacks = [
-  'Cruel Caves',
-  'Malevolent Mountains',
-  'Perilous Plains',
-  'Sinister Swamps',
-  'Wicked Woods',
-];
