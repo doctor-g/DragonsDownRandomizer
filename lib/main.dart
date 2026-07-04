@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'game.dart';
 
 const _maxPlayers = 6;
+const title = 'Dragons Down Randomizer';
 
 late final PackageInfo packageInfo;
 
@@ -14,8 +15,6 @@ void main() async {
   packageInfo = await PackageInfo.fromPlatform();
   runApp(const DragonsDownRandomizerApp());
 }
-
-const title = 'Dragons Down Randomizer';
 
 class DragonsDownRandomizerApp extends StatelessWidget {
   const DragonsDownRandomizerApp({super.key});
@@ -85,6 +84,13 @@ class MainWidget extends StatelessWidget {
   }
 }
 
+class Tableau {
+  final List<TerrainConfiguration> terrains;
+  final List<PlayerConfiguration> players;
+
+  Tableau({required this.terrains, required this.players});
+}
+
 class RandomizerWidget extends StatefulWidget {
   const RandomizerWidget({super.key});
 
@@ -94,9 +100,8 @@ class RandomizerWidget extends StatefulWidget {
 
 class _RandomizerWidgetState extends State<RandomizerWidget> {
   int _terrainCount = 3;
-  List<TerrainConfiguration> _terrains = [];
   int _playerCount = 3;
-  List<PlayerConfiguration> _players = [];
+  Tableau? _tableau;
 
   @override
   Widget build(BuildContext context) {
@@ -125,54 +130,12 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
             onPressed: _onRandomizePressed,
             child: const Text('Randomize'),
           ),
-          if (_terrains.isNotEmpty)
-            DataTable(
-              columns: <DataColumn>[
-                ...['Terrain Pack', 'Setup', 'Civ.'].map(
-                  (name) => DataColumn(
-                    label: Text(name, style: TextStyle(fontWeight: .bold)),
-                  ),
-                ),
-              ],
-              rows: <DataRow>[
-                ..._terrains.map(
-                  (config) => DataRow(
-                    cells: <DataCell>[
-                      DataCell(Text(config.packName)),
-                      DataCell(
-                        Center(child: Text(config.setupCardSide.format())),
-                      ),
-                      DataCell(
-                        Center(
-                          child: Text(config.civilizationCardSide.format()),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-          if (_players.isNotEmpty)
-            DataTable(
-              columns: [
-                ...['Player', 'Lineage', 'Class'].map(
-                  (label) => DataColumn(
-                    label: Text(label, style: TextStyle(fontWeight: .bold)),
-                  ),
-                ),
-              ],
-              rows: [
-                for (int i = 0; i < _players.length; i++)
-                  DataRow(
-                    cells: [
-                      DataCell(Center(child: Text('${i + 1}'))),
-                      DataCell(Text(_players[i].lineage)),
-                      DataCell(Text(_players[i].clazz)),
-                    ],
-                  ),
-              ],
-            ),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            child: _tableau == null
+                ? const SizedBox.shrink()
+                : TableauWidget(_tableau!, key: ValueKey(_tableau)),
+          ),
         ],
       ),
     );
@@ -180,8 +143,10 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
 
   void _onRandomizePressed() {
     setState(() {
-      _terrains = randomizeTerrains(_terrainCount);
-      _players = randomizePlayerData(_playerCount);
+      _tableau = Tableau(
+        terrains: randomizeTerrains(_terrainCount),
+        players: randomizePlayerData(_playerCount),
+      );
     });
   }
 
@@ -212,6 +177,62 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
       ),
     ],
   );
+}
+
+class TableauWidget extends StatelessWidget {
+  final Tableau _tableau;
+
+  const TableauWidget(this._tableau, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        DataTable(
+          columns: <DataColumn>[
+            ...['Terrain Pack', 'Setup', 'Civ.'].map(
+              (name) => DataColumn(
+                label: Text(name, style: TextStyle(fontWeight: .bold)),
+              ),
+            ),
+          ],
+          rows: <DataRow>[
+            ..._tableau.terrains.map(
+              (config) => DataRow(
+                cells: <DataCell>[
+                  DataCell(Text(config.packName)),
+                  DataCell(Center(child: Text(config.setupCardSide.format()))),
+                  DataCell(
+                    Center(child: Text(config.civilizationCardSide.format())),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        DataTable(
+          columns: [
+            ...['Player', 'Lineage', 'Class'].map(
+              (label) => DataColumn(
+                label: Text(label, style: TextStyle(fontWeight: .bold)),
+              ),
+            ),
+          ],
+          rows: [
+            for (int i = 0; i < _tableau.players.length; i++)
+              DataRow(
+                cells: [
+                  DataCell(Center(child: Text('${i + 1}'))),
+                  DataCell(Text(_tableau.players[i].lineage)),
+                  DataCell(Text(_tableau.players[i].clazz)),
+                ],
+              ),
+          ],
+        ),
+      ],
+    );
+  }
 }
 
 extension on Side {
