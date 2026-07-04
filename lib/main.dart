@@ -1,12 +1,17 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'game.dart';
 
 const _maxPlayers = 6;
 
-void main() {
+late final PackageInfo packageInfo;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  packageInfo = await PackageInfo.fromPlatform();
   runApp(const DragonsDownRandomizerApp());
 }
 
@@ -49,6 +54,7 @@ class MainWidget extends StatelessWidget {
     showAboutDialog(
       context: context,
       applicationName: title,
+      applicationVersion: 'Version ${packageInfo.version}',
       applicationLegalese: '©2026 Paul Gestwicki',
       children: [
         Padding(
