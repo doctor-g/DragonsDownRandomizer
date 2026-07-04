@@ -94,77 +94,81 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      spacing: 16.0,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        _makeNumberSelector(
-          label: 'Terrain Packs',
-          max: 5,
-          selected: _terrainCount,
-          onSelected: (selection) => setState(() {
-            _terrainCount = selection;
-          }),
-        ),
-        _makeNumberSelector(
-          label: 'Players',
-          max: _maxPlayers,
-          selected: _playerCount,
-          onSelected: (selection) => setState(() {
-            _playerCount = selection;
-          }),
-        ),
-        ElevatedButton(
-          onPressed: _onRandomizePressed,
-          child: const Text('Randomize'),
-        ),
-        if (_terrains.isNotEmpty)
-          DataTable(
-            columns: <DataColumn>[
-              ...['Terrain Pack', 'Setup', 'Civ.'].map(
-                (name) => DataColumn(
-                  label: Text(name, style: TextStyle(fontWeight: .bold)),
-                ),
-              ),
-            ],
-            rows: <DataRow>[
-              ..._terrains.map(
-                (config) => DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text(config.packName)),
-                    DataCell(
-                      Center(child: Text(config.setupCardSide.format())),
-                    ),
-                    DataCell(
-                      Center(child: Text(config.civilizationCardSide.format())),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+    return SingleChildScrollView(
+      child: Column(
+        spacing: 16.0,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _makeNumberSelector(
+            label: 'Terrain Packs',
+            max: 5,
+            selected: _terrainCount,
+            onSelected: (selection) => setState(() {
+              _terrainCount = selection;
+            }),
           ),
+          _makeNumberSelector(
+            label: 'Players',
+            max: _maxPlayers,
+            selected: _playerCount,
+            onSelected: (selection) => setState(() {
+              _playerCount = selection;
+            }),
+          ),
+          ElevatedButton(
+            onPressed: _onRandomizePressed,
+            child: const Text('Randomize'),
+          ),
+          if (_terrains.isNotEmpty)
+            DataTable(
+              columns: <DataColumn>[
+                ...['Terrain Pack', 'Setup', 'Civ.'].map(
+                  (name) => DataColumn(
+                    label: Text(name, style: TextStyle(fontWeight: .bold)),
+                  ),
+                ),
+              ],
+              rows: <DataRow>[
+                ..._terrains.map(
+                  (config) => DataRow(
+                    cells: <DataCell>[
+                      DataCell(Text(config.packName)),
+                      DataCell(
+                        Center(child: Text(config.setupCardSide.format())),
+                      ),
+                      DataCell(
+                        Center(
+                          child: Text(config.civilizationCardSide.format()),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
 
-        if (_players.isNotEmpty)
-          DataTable(
-            columns: [
-              ...['Player', 'Lineage', 'Class'].map(
-                (label) => DataColumn(
-                  label: Text(label, style: TextStyle(fontWeight: .bold)),
+          if (_players.isNotEmpty)
+            DataTable(
+              columns: [
+                ...['Player', 'Lineage', 'Class'].map(
+                  (label) => DataColumn(
+                    label: Text(label, style: TextStyle(fontWeight: .bold)),
+                  ),
                 ),
-              ),
-            ],
-            rows: [
-              for (int i = 0; i < _players.length; i++)
-                DataRow(
-                  cells: [
-                    DataCell(Center(child: Text('${i + 1}'))),
-                    DataCell(Text(_players[i].lineage)),
-                    DataCell(Text(_players[i].clazz)),
-                  ],
-                ),
-            ],
-          ),
-      ],
+              ],
+              rows: [
+                for (int i = 0; i < _players.length; i++)
+                  DataRow(
+                    cells: [
+                      DataCell(Center(child: Text('${i + 1}'))),
+                      DataCell(Text(_players[i].lineage)),
+                      DataCell(Text(_players[i].clazz)),
+                    ],
+                  ),
+              ],
+            ),
+        ],
+      ),
     );
   }
 
