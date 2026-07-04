@@ -88,7 +88,7 @@ class RandomizerWidget extends StatefulWidget {
 
 class _RandomizerWidgetState extends State<RandomizerWidget> {
   int _terrainCount = 3;
-  List<String> _terrains = [];
+  List<TerrainConfiguration> _terrains = [];
   int _playerCount = 3;
   List<PlayerData> _playerData = [];
 
@@ -119,12 +119,31 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
           child: const Text('Randomize'),
         ),
         if (_terrains.isNotEmpty)
-          Column(
-            children: [
-              const Text('TERRAINS'),
-              ..._terrains.map((terrain) => Text(terrain)),
+          DataTable(
+            columns: <DataColumn>[
+              ...['Terrain Pack', 'Setup', 'Civ.'].map(
+                (name) => DataColumn(
+                  label: Text(name, style: TextStyle(fontWeight: .bold)),
+                ),
+              ),
+            ],
+            rows: <DataRow>[
+              ..._terrains.map(
+                (config) => DataRow(
+                  cells: <DataCell>[
+                    DataCell(Text(config.packName)),
+                    DataCell(
+                      Center(child: Text(config.setupCardSide.format())),
+                    ),
+                    DataCell(
+                      Center(child: Text(config.civilizationCardSide.format())),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
+
         if (_playerData.isNotEmpty)
           Wrap(
             spacing: 12.0,
@@ -132,7 +151,10 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
               for (int i = 0; i < _playerData.length; i++)
                 Column(
                   children: [
-                    Text("PLAYER ${i + 1}"),
+                    Text(
+                      "Player ${i + 1}",
+                      style: TextStyle(fontWeight: .bold),
+                    ),
                     PlayerWidget(data: _playerData[i]),
                   ],
                 ),
@@ -143,20 +165,10 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
   }
 
   void _onRandomizePressed() {
-    final shuffledTerrains = List.of(terrainPacks)..shuffle();
     setState(() {
-      _terrains = shuffledTerrains.sublist(0, _terrainCount)..sort();
-      _playerData = _generateRandomPlayerData(_playerCount);
+      _terrains = randomizeTerrains(_terrainCount);
+      _playerData = randomizePlayerData(_playerCount);
     });
-  }
-
-  List<PlayerData> _generateRandomPlayerData(int count) {
-    final shuffledLineages = List.of(lineages)..shuffle();
-    final shuffledClasses = List.of(classes)..shuffle();
-    return [
-      for (int i = 0; i < count; i++)
-        PlayerData(lineage: shuffledLineages[i], clazz: shuffledClasses[i]),
-    ];
   }
 
   Widget _makeNumberSelector({
@@ -186,6 +198,10 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
       ),
     ],
   );
+}
+
+extension on Side {
+  String format() => this == Side.one ? '1' : '2';
 }
 
 class PlayerWidget extends StatelessWidget {

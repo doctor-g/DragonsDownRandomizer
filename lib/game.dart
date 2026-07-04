@@ -1,3 +1,5 @@
+import 'dart:math';
+
 typedef Lineage = String;
 
 final lineages = LineageListBuilder().build([
@@ -66,3 +68,55 @@ const terrainPacks = [
   'Sinister Swamps',
   'Wicked Woods',
 ];
+
+final _random = Random();
+
+enum Side {
+  one,
+  two;
+
+  factory Side.pickRandom() {
+    return _random.nextBool() ? one : two;
+  }
+}
+
+class TerrainConfiguration {
+  /// Name of the terrain pack
+  final String packName;
+  final Side setupCardSide;
+  final Side civilizationCardSide;
+
+  TerrainConfiguration({
+    required this.packName,
+    required this.setupCardSide,
+    required this.civilizationCardSide,
+  });
+
+  factory TerrainConfiguration.withRandomSides(String packName) {
+    return TerrainConfiguration(
+      packName: packName,
+      setupCardSide: Side.pickRandom(),
+      civilizationCardSide: Side.pickRandom(),
+    );
+  }
+}
+
+List<TerrainConfiguration> randomizeTerrains(int count) {
+  if (count < 1 || count > terrainPacks.length) {
+    throw Exception('Illegal argument');
+  }
+  final shuffledTerrains = List.of(terrainPacks)..shuffle(_random);
+  return List.generate(
+    count,
+    (index) => TerrainConfiguration.withRandomSides(shuffledTerrains[index]),
+  )..sort((config1, config2) => config1.packName.compareTo(config2.packName));
+}
+
+List<PlayerData> randomizePlayerData(int count) {
+  final shuffledLineages = List.of(lineages)..shuffle();
+  final shuffledClasses = List.of(classes)..shuffle();
+  return [
+    for (int i = 0; i < count; i++)
+      PlayerData(lineage: shuffledLineages[i], clazz: shuffledClasses[i]),
+  ];
+}
