@@ -145,17 +145,21 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
           ),
 
         if (_playerData.isNotEmpty)
-          Wrap(
-            spacing: 12.0,
-            children: [
+          DataTable(
+            columns: [
+              ...['Player', 'Lineage', 'Class'].map(
+                (label) => DataColumn(
+                  label: Text(label, style: TextStyle(fontWeight: .bold)),
+                ),
+              ),
+            ],
+            rows: [
               for (int i = 0; i < _playerData.length; i++)
-                Column(
-                  children: [
-                    Text(
-                      "Player ${i + 1}",
-                      style: TextStyle(fontWeight: .bold),
-                    ),
-                    PlayerWidget(data: _playerData[i]),
+                DataRow(
+                  cells: [
+                    DataCell(Center(child: Text('${i + 1}'))),
+                    DataCell(Text(_playerData[i].lineage)),
+                    DataCell(Text(_playerData[i].clazz)),
                   ],
                 ),
             ],
