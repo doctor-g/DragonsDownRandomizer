@@ -27,11 +27,11 @@ class LineageSet {
   LineageSet(this.quantity, this.lineage);
 }
 
-class PlayerData {
+class PlayerConfiguration {
   final Lineage lineage;
   final String clazz;
 
-  PlayerData({required this.lineage, required this.clazz});
+  PlayerConfiguration({required this.lineage, required this.clazz});
 }
 
 const classes = [
@@ -112,11 +112,14 @@ List<TerrainConfiguration> randomizeTerrains(int count) {
   )..sort((config1, config2) => config1.packName.compareTo(config2.packName));
 }
 
-List<PlayerData> randomizePlayerData(int count) {
+List<PlayerConfiguration> randomizePlayerData(int count) {
   final shuffledLineages = List.of(lineages)..shuffle();
   final shuffledClasses = List.of(classes)..shuffle();
   return [
     for (int i = 0; i < count; i++)
-      PlayerData(lineage: shuffledLineages[i], clazz: shuffledClasses[i]),
+      PlayerConfiguration(
+        lineage: shuffledLineages[i],
+        clazz: shuffledClasses[i],
+      ),
   ];
 }

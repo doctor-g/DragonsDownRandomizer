@@ -90,7 +90,7 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
   int _terrainCount = 3;
   List<TerrainConfiguration> _terrains = [];
   int _playerCount = 3;
-  List<PlayerData> _playerData = [];
+  List<PlayerConfiguration> _players = [];
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +144,7 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
             ],
           ),
 
-        if (_playerData.isNotEmpty)
+        if (_players.isNotEmpty)
           DataTable(
             columns: [
               ...['Player', 'Lineage', 'Class'].map(
@@ -154,12 +154,12 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
               ),
             ],
             rows: [
-              for (int i = 0; i < _playerData.length; i++)
+              for (int i = 0; i < _players.length; i++)
                 DataRow(
                   cells: [
                     DataCell(Center(child: Text('${i + 1}'))),
-                    DataCell(Text(_playerData[i].lineage)),
-                    DataCell(Text(_playerData[i].clazz)),
+                    DataCell(Text(_players[i].lineage)),
+                    DataCell(Text(_players[i].clazz)),
                   ],
                 ),
             ],
@@ -171,7 +171,7 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
   void _onRandomizePressed() {
     setState(() {
       _terrains = randomizeTerrains(_terrainCount);
-      _playerData = randomizePlayerData(_playerCount);
+      _players = randomizePlayerData(_playerCount);
     });
   }
 
@@ -209,7 +209,7 @@ extension on Side {
 }
 
 class PlayerWidget extends StatelessWidget {
-  final PlayerData _data;
+  final PlayerConfiguration _data;
 
   const PlayerWidget({super.key, required this._data});
 
