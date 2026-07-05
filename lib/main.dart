@@ -70,7 +70,13 @@ class MainWidget extends StatelessWidget {
                     color: Colors.blue,
                     decoration: TextDecoration.underline,
                   ),
-                  text: 'Scott DeMers\' Dragons Down',
+                  text: 'Scott DeMers\' ',
+                  children: [
+                    TextSpan(
+                      style: const TextStyle(fontStyle: .italic),
+                      text: 'Dragons Down',
+                    ),
+                  ],
                   recognizer: TapGestureRecognizer()
                     ..onTap = () =>
                         launchUrl(Uri.parse('https://activemagicgames.com')),

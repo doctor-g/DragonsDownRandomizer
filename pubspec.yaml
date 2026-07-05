@@ -2,7 +2,7 @@ name: dragons_down_randomizer
 description: "Randomizer for Dragons Down board game"
 publish_to: 'none'
 
-version: 0.1.0+1
+version: 0.2.0+1
 
 environment:
   sdk: ^3.12.2
