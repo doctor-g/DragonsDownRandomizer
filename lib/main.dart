@@ -10,9 +10,12 @@
  * You should have received a copy of the GNU General Public License along with Dragons Down Randomizer. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'package:dragons_down_randomizer/settings.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'game.dart';
@@ -22,10 +25,12 @@ const title = 'Dragons Down Randomizer';
 const sourceUriString = 'https://github.com/doctor-g/DragonsDownRandomizer';
 
 late final PackageInfo packageInfo;
+late final SharedPreferences preferences;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   packageInfo = await PackageInfo.fromPlatform();
+  preferences = await SharedPreferences.getInstance();
   runApp(const DragonsDownRandomizerApp());
 }
 
@@ -35,10 +40,13 @@ class DragonsDownRandomizerApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: title,
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: MainWidget(),
+    return ChangeNotifierProvider<Settings>(
+      create: (_) => Settings(preferences),
+      builder: (context, child) => MaterialApp(
+        title: title,
+        theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
+        home: MainWidget(),
+      ),
     );
   }
 }
@@ -57,6 +65,13 @@ class MainWidget extends StatelessWidget {
       appBar: AppBar(
         title: const Text(title),
         actions: [
+          IconButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => SettingsScreen()),
+            ),
+            icon: const Icon(Icons.settings),
+          ),
           IconButton(
             onPressed: () => _showLegalPopup(context),
             icon: const Icon(Icons.info),
@@ -160,7 +175,7 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
             duration: const Duration(milliseconds: 250),
             child: _tableau == null
                 ? const SizedBox.shrink()
-                : TableauWidget(_tableau!, key: ValueKey(_tableau)),
+                : TableauWidget(_tableau!, key: ValueKey(_tableau!)),
           ),
         ],
       ),
@@ -169,7 +184,12 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
 
   void _onRandomizePressed() {
     setState(() {
-      _tableau = Tableau.random(terrains: _terrainCount, players: _playerCount);
+      do {
+        _tableau = Tableau.random(
+          terrains: _terrainCount,
+          players: _playerCount,
+        );
+      } while (!_acceptable(_tableau!));
     });
   }
 
@@ -200,6 +220,38 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
       ),
     ],
   );
+
+  bool _acceptable(Tableau tableau) {
+    final predicates = <TableauPredicate>[];
+
+    // Use the predicates appropriate to the current application settings.
+    if (context.read<Settings>().preventClassesWithoutTerrains) {
+      predicates.addAll([
+        ClassRequiresTerrainPredicate(
+          characterClass: .barbarian,
+          terrainPack: .mountains,
+        ),
+        ClassRequiresTerrainPredicate(
+          characterClass: .ranger,
+          terrainPack: .woods,
+        ),
+      ]);
+    }
+    if (context.read<Settings>().preventLineagesWithoutTerrains) {
+      predicates.addAll([
+        LineageRequiresTerrainPredicate(lineage: .dwarf, terrain: .caves),
+        LineageRequiresTerrainPredicate(lineage: .halfOrc, terrain: .mountains),
+      ]);
+    }
+
+    // Run all the predicates.
+    for (final predicate in predicates) {
+      if (!predicate.accepts(tableau)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
 class TableauWidget extends StatelessWidget {
@@ -223,7 +275,7 @@ class TableauWidget extends StatelessWidget {
             ..._tableau.terrains.map(
               (config) => DataRow(
                 cells: <DataCell>[
-                  DataCell(Text(config.packName)),
+                  DataCell(Text(config.pack.name)),
                   DataCell(Center(child: Text(config.setupCardSide.format()))),
                   DataCell(
                     Center(child: Text(config.civilizationCardSide.format())),
@@ -247,8 +299,8 @@ class TableauWidget extends StatelessWidget {
               DataRow(
                 cells: [
                   DataCell(Center(child: Text('${i + 1}'))),
-                  DataCell(Text(_tableau.players[i].lineage)),
-                  DataCell(Text(_tableau.players[i].clazz)),
+                  DataCell(Text(_tableau.players[i].lineage.name)),
+                  DataCell(Text(_tableau.players[i].clazz.name)),
                 ],
               ),
           ],
