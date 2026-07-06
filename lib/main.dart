@@ -7,6 +7,7 @@ import 'game.dart';
 
 const _maxPlayers = 6;
 const title = 'Dragons Down Randomizer';
+const sourceUriString = 'https://github.com/doctor-g/DragonsDownRandomizer';
 
 late final PackageInfo packageInfo;
 
@@ -31,6 +32,11 @@ class DragonsDownRandomizerApp extends StatelessWidget {
 }
 
 class MainWidget extends StatelessWidget {
+  static const _linkStyle = TextStyle(
+    color: Colors.blue,
+    decoration: TextDecoration.underline,
+  );
+
   const MainWidget({super.key});
 
   @override
@@ -54,22 +60,19 @@ class MainWidget extends StatelessWidget {
       context: context,
       applicationName: title,
       applicationVersion: 'Version ${packageInfo.version}',
-      applicationLegalese: '©2026 Paul Gestwicki',
+      applicationLegalese: 'Copyright 2026 Paul Gestwicki',
       children: [
         Padding(
           // The children use a different indentation level than the legalese.
           // Without the padding, there will be a ragged left, which looks bad.
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
           child: RichText(
             text: TextSpan(
               style: Theme.of(context).textTheme.bodySmall,
               text: 'Based on ',
               children: [
                 TextSpan(
-                  style: const TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                  ),
+                  style: _linkStyle,
                   text: 'Scott DeMers\' ',
                   children: [
                     TextSpan(
@@ -80,6 +83,18 @@ class MainWidget extends StatelessWidget {
                   recognizer: TapGestureRecognizer()
                     ..onTap = () =>
                         launchUrl(Uri.parse('https://activemagicgames.com')),
+                ),
+                TextSpan(
+                  text:
+                      '\n\nThis software is licensed under GNU General Public License. Source code is available at ',
+                  children: [
+                    TextSpan(
+                      style: _linkStyle,
+                      text: sourceUriString,
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => launchUrl(Uri.parse(sourceUriString)),
+                    ),
+                  ],
                 ),
               ],
             ),
