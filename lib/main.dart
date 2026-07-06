@@ -286,9 +286,9 @@ class TableauWidget extends StatelessWidget {
             columns: <DataColumn>[
               ...[
                 'Terrain Pack',
-                'Setup\nCard',
+                'Setup Card\nSide',
                 'Civ Card\nSide',
-                'Civ Card\nClearing',
+                'Civ\nClearing',
               ].map(
                 (name) => DataColumn(
                   label: Text(
