@@ -66,15 +66,15 @@ class MainWidget extends StatelessWidget {
         title: const Text(title),
         actions: [
           IconButton(
+            onPressed: () => _showLegalPopup(context),
+            icon: const Icon(Icons.info),
+          ),
+          IconButton(
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => SettingsScreen()),
             ),
             icon: const Icon(Icons.settings),
-          ),
-          IconButton(
-            onPressed: () => _showLegalPopup(context),
-            icon: const Icon(Icons.info),
           ),
         ],
       ),
