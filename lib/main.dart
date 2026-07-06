@@ -117,13 +117,6 @@ class MainWidget extends StatelessWidget {
   }
 }
 
-class Tableau {
-  final List<TerrainConfiguration> terrains;
-  final List<PlayerConfiguration> players;
-
-  Tableau({required this.terrains, required this.players});
-}
-
 class RandomizerWidget extends StatefulWidget {
   const RandomizerWidget({super.key});
 
@@ -176,10 +169,7 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
 
   void _onRandomizePressed() {
     setState(() {
-      _tableau = Tableau(
-        terrains: randomizeTerrains(_terrainCount),
-        players: randomizePlayerData(_playerCount),
-      );
+      _tableau = Tableau.random(terrains: _terrainCount, players: _playerCount);
     });
   }
 
