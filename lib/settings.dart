@@ -55,17 +55,38 @@ class SettingsScreen extends StatelessWidget {
 }
 
 class Settings extends ChangeNotifier {
+  static const _terrainsKey = 'terrains';
+  static const _playersKey = 'players';
   static const _preventClassesWithoutTerrainsKey =
       'preventClassesWithoutTerrains';
   static const _preventLineagesWithoutTerrainsKey =
       'preventLineagesWithoutTerrains';
+
   final SharedPreferences _preferences;
 
   Settings(this._preferences) {
+    _terrains = _preferences.getInt(_terrainsKey) ?? 3;
+    _players = _preferences.getInt(_playersKey) ?? 3;
     _preventClassesWithoutTerrains =
         _preferences.getBool(_preventClassesWithoutTerrainsKey) ?? true;
     _preventLineagesWithoutTerrains =
         _preferences.getBool(_preventLineagesWithoutTerrainsKey) ?? true;
+  }
+
+  late int _terrains;
+  int get terrains => _terrains;
+  set terrains(int value) {
+    _terrains = value;
+    _preferences.setInt(_terrainsKey, value);
+    notifyListeners();
+  }
+
+  late int _players;
+  int get players => _players;
+  set players(int value) {
+    _players = value;
+    _preferences.setInt(_playersKey, value);
+    notifyListeners();
   }
 
   late bool _preventClassesWithoutTerrains;

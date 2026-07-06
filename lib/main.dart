@@ -140,9 +140,17 @@ class RandomizerWidget extends StatefulWidget {
 }
 
 class _RandomizerWidgetState extends State<RandomizerWidget> {
-  int _terrainCount = 3;
-  int _playerCount = 3;
+  late int _terrainCount;
+  late int _playerCount;
   Tableau? _tableau;
+
+  @override
+  void initState() {
+    super.initState();
+    final settings = context.read<Settings>();
+    _terrainCount = settings.terrains;
+    _playerCount = settings.players;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,6 +165,7 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
             selected: _terrainCount,
             onSelected: (selection) => setState(() {
               _terrainCount = selection;
+              context.read<Settings>().terrains = selection;
             }),
           ),
           _makeNumberSelector(
@@ -165,6 +174,7 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
             selected: _playerCount,
             onSelected: (selection) => setState(() {
               _playerCount = selection;
+              context.read<Settings>().players = selection;
             }),
           ),
           ElevatedButton(
