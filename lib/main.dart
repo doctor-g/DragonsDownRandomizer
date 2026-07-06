@@ -265,6 +265,10 @@ class _RandomizerWidgetState extends State<RandomizerWidget> {
 }
 
 class TableauWidget extends StatelessWidget {
+  /// Default spacing is much larger. This keeps the table tight so that
+  /// scrolling is usually unnecessary.
+  static const _columnSpacing = 12.0;
+
   final Tableau _tableau;
 
   const TableauWidget(this._tableau, {super.key});
@@ -273,47 +277,75 @@ class TableauWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        DataTable(
-          columns: <DataColumn>[
-            ...['Terrain Pack', 'Setup', 'Civ.'].map(
-              (name) => DataColumn(
-                label: Text(name, style: TextStyle(fontWeight: .bold)),
-              ),
-            ),
-          ],
-          rows: <DataRow>[
-            ..._tableau.terrains.map(
-              (config) => DataRow(
-                cells: <DataCell>[
-                  DataCell(Text(config.pack.name)),
-                  DataCell(Center(child: Text(config.setupCardSide.format()))),
-                  DataCell(
-                    Center(child: Text(config.civilizationCardSide.format())),
+        // Wrap the table in a scroll view just in case the device screen
+        // is quite narrow.
+        SingleChildScrollView(
+          scrollDirection: .horizontal,
+          child: DataTable(
+            columnSpacing: _columnSpacing,
+            columns: <DataColumn>[
+              ...[
+                'Terrain Pack',
+                'Setup\nCard',
+                'Civ Card\nSide',
+                'Civ Card\nClearing',
+              ].map(
+                (name) => DataColumn(
+                  label: Text(
+                    name,
+                    style: TextStyle(fontWeight: .bold),
+                    textAlign: TextAlign.center,
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+            rows: <DataRow>[
+              ..._tableau.terrains.map(
+                (config) => DataRow(
+                  cells: <DataCell>[
+                    DataCell(Text(config.pack.name)),
+                    DataCell(
+                      Center(child: Text(config.setupCardSide.format())),
+                    ),
+                    DataCell(
+                      Center(child: Text(config.civilizationCardSide.format())),
+                    ),
+                    DataCell(
+                      Center(
+                        child: Text(config.civilizationClearing.toString()),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
 
-        DataTable(
-          columns: [
-            ...['Player', 'Lineage', 'Class'].map(
-              (label) => DataColumn(
-                label: Text(label, style: TextStyle(fontWeight: .bold)),
+        // Wrap the table in a scroll view just in case the device screen
+        // is quite narrow.
+        SingleChildScrollView(
+          scrollDirection: .horizontal,
+          child: DataTable(
+            columnSpacing: _columnSpacing,
+            columns: [
+              ...['Player', 'Lineage', 'Class'].map(
+                (label) => DataColumn(
+                  label: Text(label, style: TextStyle(fontWeight: .bold)),
+                ),
               ),
-            ),
-          ],
-          rows: [
-            for (int i = 0; i < _tableau.players.length; i++)
-              DataRow(
-                cells: [
-                  DataCell(Center(child: Text('${i + 1}'))),
-                  DataCell(Text(_tableau.players[i].lineage.name)),
-                  DataCell(Text(_tableau.players[i].clazz.name)),
-                ],
-              ),
-          ],
+            ],
+            rows: [
+              for (int i = 0; i < _tableau.players.length; i++)
+                DataRow(
+                  cells: [
+                    DataCell(Center(child: Text('${i + 1}'))),
+                    DataCell(Text(_tableau.players[i].lineage.name)),
+                    DataCell(Text(_tableau.players[i].clazz.name)),
+                  ],
+                ),
+            ],
+          ),
         ),
       ],
     );

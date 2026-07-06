@@ -113,11 +113,13 @@ class TerrainConfiguration {
   final TerrainPack pack;
   final Side setupCardSide;
   final Side civilizationCardSide;
+  final int civilizationClearing;
 
   TerrainConfiguration({
     required this.pack,
     required this.setupCardSide,
     required this.civilizationCardSide,
+    required this.civilizationClearing,
   });
 
   factory TerrainConfiguration.withRandomSides(TerrainPack pack) {
@@ -125,6 +127,7 @@ class TerrainConfiguration {
       pack: pack,
       setupCardSide: Side.pickRandom(),
       civilizationCardSide: Side.pickRandom(),
+      civilizationClearing: _random.nextInt(4) + 1,
     );
   }
 }
