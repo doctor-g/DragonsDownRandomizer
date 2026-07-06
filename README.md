@@ -5,6 +5,8 @@ with the _Desolation_ expansion.
 
 The app is hosted at https://doctor-g.github.io/DragonsDownRandomizer/.
 
-## License
+## Legal
+
+Copyright 2026 Paul Gestwicki
 
 This software is licensed under the [GNU General Public License 3.0](LICENSE).
