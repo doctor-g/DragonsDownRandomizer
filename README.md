@@ -5,6 +5,10 @@ with the _Desolation_ expansion.
 
 The app is hosted at https://doctor-g.github.io/DragonsDownRandomizer/.
 
+## Development 
+
+This application was written in [Dart](https://dart.dev) using [Flutter](https://flutter.dev) and [Android Studio](https://developer.android.com/studio).
+
 ## Legal
 
 Copyright 2026 Paul Gestwicki
